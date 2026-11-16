@@ -79,25 +79,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        switch (id) {
-            case R.id.btn_start: {
-                showDialog();
-                mServerManager.startServer();
-                break;
-            }
-            case R.id.btn_stop: {
-                showDialog();
-                mServerManager.stopServer();
-                break;
-            }
-            case R.id.btn_browse: {
-                if (!TextUtils.isEmpty(mRootUrl)) {
-                    Intent intent = new Intent();
-                    intent.setAction("android.intent.action.VIEW");
-                    intent.setData(Uri.parse(mRootUrl));
-                    startActivity(intent);
-                }
-                break;
+        if (id == R.id.btn_start){
+            showDialog();
+            mServerManager.startServer();
+        }else if (id == R.id.btn_stop){
+            showDialog();
+            mServerManager.stopServer();
+        }else if (id == R.id.btn_browse){
+            if (!TextUtils.isEmpty(mRootUrl)) {
+                Intent intent = new Intent();
+                intent.setAction("android.intent.action.VIEW");
+                intent.setData(Uri.parse(mRootUrl));
+                startActivity(intent);
             }
         }
     }

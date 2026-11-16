@@ -1,6 +1,9 @@
 apply plugin: plugin.androidLibrary
+apply plugin: plugin.kotlinAndroid
+apply plugin: plugin.ksp
 
 android {
+    namespace='com.yanzhenjie.andserver.api'
     compileSdkVersion androidBuild.compileSdkVersion
 
     defaultConfig {
@@ -10,10 +13,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-
+    buildFeatures {
+        buildConfig true
+    }
     buildTypes {
         release {
             buildConfigField "java.lang.String", "PROJECT_VERSION", "\"${POM_VERSION}\""
@@ -30,6 +35,7 @@ dependencies {
     implementation deps.apache.httpcore
     implementation deps.apache.fileupload
     compileOnly deps.android.annotation
+    implementation deps.kotlinStdlib
 }
 
-apply from: publishScript
+//apply from: publishScript

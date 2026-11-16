@@ -1,9 +1,11 @@
 apply plugin: plugin.javaLibrary
 apply plugin: plugin.javaPlugin
+apply plugin: plugin.kotlinJvm
+apply plugin: plugin.ksp
 
 compileJava {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
@@ -12,6 +14,7 @@ dependencies {
 
     implementation deps.android.plugin
     implementation deps.poet
+    implementation deps.kotlinStdlib
 }
 
-apply from: publishScript
+//apply from: publishScript

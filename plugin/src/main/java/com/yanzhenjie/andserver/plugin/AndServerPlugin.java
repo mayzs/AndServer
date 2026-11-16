@@ -22,12 +22,12 @@ import com.android.build.gradle.LibraryPlugin;
 import com.android.build.gradle.api.BaseVariant;
 import com.yanzhenjie.andserver.plugin.util.Log;
 
-import org.apache.commons.io.FileUtils;
 import org.gradle.api.Action;
 import org.gradle.api.DomainObjectSet;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.internal.impldep.org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;

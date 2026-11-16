@@ -1,7 +1,12 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 apply plugin: plugin.android
+apply plugin: plugin.kotlinAndroid
+apply plugin: plugin.ksp
 apply plugin: plugin.andServer
 
 android {
+    namespace='com.yanzhenjie.andserver.sample'
     compileSdkVersion androidBuild.compileSdkVersion
 
     defaultConfig {
@@ -13,14 +18,30 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
+        }
+    }
+    buildFeatures {
+        buildConfig true
     }
 }
 
 dependencies {
     implementation project(':api')
-    annotationProcessor project(':processor')
+
+    // kapt + KSP 共存：根据 useKsp 属性选择处理器
+    // 默认使用 KSP（更快），设置 -PuseKsp=false 则回退到 kapt
+    def useKsp = findProperty('useKsp') ?: 'true'
+    if (useKsp == 'true') {
+        ksp project(':processor')
+    } else {
+        annotationProcessor project(':processor')
+    }
 
     implementation deps.android.material
     implementation deps.android.compat
@@ -30,4 +51,5 @@ dependencies {
 
     implementation deps.loading
     implementation deps.json
+    implementation deps.kotlinStdlib
 }

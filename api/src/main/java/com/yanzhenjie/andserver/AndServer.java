@@ -19,6 +19,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.yanzhenjie.andserver.api.BuildConfig;
 import com.yanzhenjie.andserver.server.ProxyServer;
 import com.yanzhenjie.andserver.server.WebServer;
 

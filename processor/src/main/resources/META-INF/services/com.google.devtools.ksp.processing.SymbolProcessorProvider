@@ -1,0 +1,5 @@
+com.yanzhenjie.andserver.processor.ksp.ConfigProcessorProvider
+com.yanzhenjie.andserver.processor.ksp.ControllerProcessorProvider
+com.yanzhenjie.andserver.processor.ksp.ConverterProcessorProvider
+com.yanzhenjie.andserver.processor.ksp.InterceptorProcessorProvider
+com.yanzhenjie.andserver.processor.ksp.ResolverProcessorProvider
