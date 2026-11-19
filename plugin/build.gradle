@@ -1,7 +1,15 @@
-apply plugin: plugin.javaLibrary
-apply plugin: plugin.javaPlugin
-apply plugin: plugin.kotlinJvm
-apply plugin: plugin.ksp
+plugins {
+    id ("java-library")
+    id ("java-gradle-plugin")
+//    id ("org.jetbrains.kotlin.jvm")
+//    id ("com.google.devtools.ksp")
+}
+
+//apply plugin: "java-library"
+//apply plugin: "java-gradle-plugin"
+//apply plugin: "org.jetbrains.kotlin.jvm"
+//apply plugin: "com.google.devtools.ksp"
+
 
 compileJava {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -11,10 +19,15 @@ compileJava {
 dependencies {
     compileOnly gradleApi()
     api project(':annotation')
-
-    implementation deps.android.plugin
-    implementation deps.poet
-    implementation deps.kotlinStdlib
+    implementation 'commons-io:commons-io:2.22.0'
+    compileOnly ("com.android.tools.build:gradle:9.5.0")
+    implementation ("com.squareup:javapoet:1.13.0")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:2.4.21")
 }
 
 //apply from: publishScript
+
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << '-Xlint:deprecation'
+}

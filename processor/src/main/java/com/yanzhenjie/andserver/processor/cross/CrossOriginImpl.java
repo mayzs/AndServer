@@ -27,9 +27,19 @@ public class CrossOriginImpl {
 
     private CrossOrigin mCrossOrigin;
 
+    /**
+     * Constructor.
+     *
+     * @param crossOrigin annotation.
+     */
     public CrossOriginImpl(CrossOrigin crossOrigin) {
         this.mCrossOrigin = crossOrigin;
     }
+    /**
+     * Get allowed origins.
+     *
+     * @return allowed origins.
+     */
 
     public String[] value() {
         if (mCrossOrigin != null) {
@@ -38,12 +48,22 @@ public class CrossOriginImpl {
         return new String[0];
     }
 
+    /**
+     * Get allowed headers.
+     *
+     * @return allowed headers.
+     */
     public String[] origins() {
         if (mCrossOrigin != null) {
             return mCrossOrigin.origins();
         }
         return new String[0];
     }
+    /**
+     * Get exposed headers.
+     *
+     * @return exposed headers.
+     */
 
     public String[] allowedHeaders() {
         if (mCrossOrigin != null) {
@@ -51,6 +71,11 @@ public class CrossOriginImpl {
         }
         return new String[0];
     }
+    /**
+     * Get allowed methods.
+     *
+     * @return allowed methods.
+     */
 
     public String[] exposedHeaders() {
         if (mCrossOrigin != null) {
@@ -58,7 +83,11 @@ public class CrossOriginImpl {
         }
         return new String[0];
     }
-
+    /**
+     * Get allowed methods.
+     *
+     * @return allowed methods.
+     */
     public String[] methods() {
         if (mCrossOrigin != null) {
             RequestMethod[] methods = mCrossOrigin.methods();
@@ -72,6 +101,11 @@ public class CrossOriginImpl {
         }
         return new String[0];
     }
+    /**
+     * Get allow credentials.
+     *
+     * @return allow credentials.
+     */
 
     public String allowCredentials() {
         if (mCrossOrigin != null) {
@@ -79,6 +113,11 @@ public class CrossOriginImpl {
         }
         return "";
     }
+    /**
+     * Get max age.
+     *
+     * @return max age.
+     */
 
     public long maxAge() {
         if (mCrossOrigin != null) {

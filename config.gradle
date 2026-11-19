@@ -24,7 +24,7 @@ ext {
 
     deps = [
         android: [
-            plugin    : 'com.android.tools.build:gradle:8.10.0',
+            plugin    : 'com.android.tools.build:gradle:9.5.0',
             annotation: 'androidx.annotation:annotation:1.9.1',
             compat    : 'androidx.appcompat:appcompat:1.7.1',
             material  : 'com.google.android.material:material:1.12.0',
@@ -37,7 +37,7 @@ ext {
             fileupload : "com.yanzhenjie.apache:fileupload:1.4",
         ],
 
-        poet   : 'com.squareup:javapoet:1.12.1',
+        poet   : 'com.squareup:javapoet:1.13.0',
         loading: 'com.yanzhenjie:loading:1.0.0',
         json   : 'com.alibaba:fastjson:1.1.71.android',
         kotlinStdlib  : 'org.jetbrains.kotlin:kotlin-stdlib:2.2.0',

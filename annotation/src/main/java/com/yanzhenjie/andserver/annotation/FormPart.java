@@ -22,16 +22,19 @@ public @interface FormPart {
 
     /**
      * Alias for {@link #name()}.
+     * @return name
      */
     String value() default "";
 
     /**
      * The name of the request parameter to bind to.
+     * @return name
      */
     String name() default "";
 
     /**
      * Whether the parameter is required.
+     * @return required
      */
     boolean required() default true;
 }

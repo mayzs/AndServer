@@ -25,47 +25,92 @@ public class Delete implements Mapping {
 
     private DeleteMapping mMapping;
     private boolean isRest;
-
+    /**
+     * Constructor.
+     *
+     * @param mapping mapping.
+     * @param rest rest.
+     */
     public Delete(DeleteMapping mapping, boolean rest) {
         this.mMapping = mapping;
         this.isRest = rest;
     }
 
+    /**
+     * Get url mapping.
+     *
+     * @return url mapping.
+     */
     @Override
     public String[] value() {
         return mMapping.value();
     }
 
+    /**
+     * Get url path.
+     *
+     * @return url path.
+     */
     @Override
     public String[] path() {
         return mMapping.path();
     }
 
+    /**
+     * Get request method.
+     *
+     * @return request method.
+     */
     @Override
     public String[] method() {
         return new String[]{RequestMethod.DELETE.value()};
     }
 
+    /**
+     * Get request params.
+     *
+     * @return request params.
+     */
     @Override
     public String[] params() {
         return mMapping.params();
     }
 
+    /**
+     * Get request headers.
+     *
+     * @return request headers.
+     */
     @Override
     public String[] headers() {
         return mMapping.headers();
     }
 
+    /**
+     * Get consumes.
+     *
+     * @return consumes.
+     */
     @Override
     public String[] consumes() {
         return mMapping.consumes();
     }
 
+    /**
+     * Get produces.
+     *
+     * @return produces.
+     */
     @Override
     public String[] produces() {
         return mMapping.produces();
     }
 
+    /**
+     * Is rest controller.
+     *
+     * @return {@code true} if rest controller.
+     */
     @Override
     public boolean isRest() {
         return isRest;

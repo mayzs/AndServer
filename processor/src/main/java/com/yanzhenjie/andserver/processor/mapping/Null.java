@@ -21,50 +21,88 @@ package com.yanzhenjie.andserver.processor.mapping;
 public class Null implements Mapping {
 
     private boolean isRest;
-
+    /**
+     * Null mapping.
+     */
     public Null() {
         this(false);
     }
 
+    /**
+     * Null mapping.
+     * @param isRest is rest.
+     */
     public Null(boolean isRest) {
         this.isRest = isRest;
     }
 
+    /**
+     * Get mapping value.
+     * @return value.
+     */
     @Override
     public String[] value() {
         return new String[0];
     }
 
+    /**
+     * Get mapping path.
+     * @return path.
+     */
     @Override
     public String[] path() {
         return new String[0];
     }
 
+    /**
+     * Get mapping method.
+     * @return method.
+     */
     @Override
     public String[] method() {
         return new String[0];
     }
 
+    /**
+     * Get mapping params.
+     * @return params.
+     */
     @Override
     public String[] params() {
         return new String[0];
     }
 
+    /**
+     * Get mapping headers.
+     * @return headers.
+     */
     @Override
     public String[] headers() {
         return new String[0];
     }
 
+    /**
+     * Get mapping consumes.
+     * @return consumes.
+     */
     @Override
     public String[] consumes() {
         return new String[0];
     }
 
+    /**
+     * Get mapping produces.
+     * @return produces.
+     */
     @Override
     public String[] produces() {
         return new String[0];
     }
 
+    /**
+     * Is rest mapping.
+     * @return true if is rest mapping.
+     */
     @Override
     public boolean isRest() {
         return isRest;

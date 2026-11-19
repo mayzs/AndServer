@@ -29,6 +29,7 @@ public @interface AppInfo {
 
     /**
      * Application Id.
+     * @return application id
      */
     String value() default "";
 

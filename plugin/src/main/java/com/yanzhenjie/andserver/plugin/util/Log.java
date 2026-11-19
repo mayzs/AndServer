@@ -23,44 +23,76 @@ import org.gradle.api.Project;
 public class Log {
 
     private static org.gradle.api.logging.Logger sLogger;
-
+    /**
+     * Inject logger.
+     * @param project project.
+     */
     public static void inject(Project project) {
         sLogger = project.getLogger();
     }
 
+    /**
+     * Log
+     */
     public Log() {
     }
 
+    /**
+     * Log.i
+     * @param format format
+     * @param args  args
+     */
     public void i(String format, Object... args) {
         if (null != format && null != sLogger) {
             sLogger.info("AndServer::Info >>> " + String.format(format, args));
         }
     }
 
+    /**
+     * Log.d
+     * @param format format
+     * @param args  args
+     */
     public void d(String format, Object... args) {
         if (null != format && null != sLogger) {
             sLogger.debug("AndServer::Debug >>> " + String.format(format, args));
         }
     }
 
+    /**
+     * Log.w
+     * @param format format
+     * @param args  args
+     */
     public void w(String format, Object... args) {
         if (null != format && null != sLogger) {
             sLogger.warn("AndServer::Warn >>> " + String.format(format, args));
         }
     }
 
+    /**
+     * Log.e
+     * @param format format
+     * @param args  args
+     */
     public void e(String format, Object... args) {
         if (null != format && null != sLogger) {
             sLogger.error("AndServer::Error >>> " + String.format(format, args));
         }
     }
-
+    /**
+     * Log.e
+     * @param error error
+     */
     public void e(Throwable error) {
         if (null != error) {
             sLogger.error("AndServer::Error >>> " + formatStackTrace(error.getStackTrace()));
         }
     }
-
+    /**
+     * Log.formatStackTrace
+     * @param stackTrace stackTrace
+     */
     private static String formatStackTrace(StackTraceElement[] stackTrace) {
         StringBuilder sb = new StringBuilder();
         for (StackTraceElement element : stackTrace) {

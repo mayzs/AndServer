@@ -1,6 +1,11 @@
-apply plugin: plugin.javaLibrary
-apply plugin: plugin.kotlinJvm
-apply plugin: plugin.ksp
+plugins {
+    id ("java-library")
+    id ("org.jetbrains.kotlin.jvm")
+    id ("com.google.devtools.ksp")
+}
+//apply plugin: "java-library"
+//apply plugin: "org.jetbrains.kotlin.jvm"
+//apply plugin: "com.google.devtools.ksp"
 
 compileJava {
     sourceCompatibility = JavaVersion.VERSION_17

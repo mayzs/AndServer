@@ -28,21 +28,38 @@ public class Any implements Mapping {
     private RequestMapping mMapping;
     private boolean isRest;
 
+    /**
+     * any
+     * @param mapping mapping
+     * @param rest rest
+     */
     public Any(RequestMapping mapping, boolean rest) {
         this.mMapping = mapping;
         this.isRest = rest;
     }
 
+    /**
+     * {@link RequestMapping#value()}
+     * @return value
+     */
     @Override
     public String[] value() {
         return mMapping.value();
     }
 
+    /**
+     * {@link RequestMapping#path()}
+     * @return path
+     */
     @Override
     public String[] path() {
         return mMapping.path();
     }
 
+    /**
+     * {@link RequestMapping#method()}
+     * @return method
+     */
     @Override
     public String[] method() {
         RequestMethod[] methods = mMapping.method();
@@ -55,26 +72,45 @@ public class Any implements Mapping {
         return textMethods;
     }
 
+    /**
+     * {@link RequestMapping#params()}
+     * @return params
+     */
     @Override
     public String[] params() {
         return mMapping.params();
     }
 
+    /**
+     * {@link RequestMapping#headers()}
+     * @return headers
+     */
     @Override
     public String[] headers() {
         return mMapping.headers();
     }
 
+    /**
+     * {@link RequestMapping#consumes()}
+     * @return consumes
+     */
     @Override
     public String[] consumes() {
         return mMapping.consumes();
     }
 
+    /**
+     * {@link RequestMapping#produces()}
+     * @return produces
+     */
     @Override
     public String[] produces() {
         return mMapping.produces();
     }
 
+    /**
+     * @return isRest
+     */
     @Override
     public boolean isRest() {
         return isRest;

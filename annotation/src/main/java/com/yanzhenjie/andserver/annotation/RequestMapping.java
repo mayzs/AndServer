@@ -29,6 +29,7 @@ public @interface RequestMapping {
 
     /**
      * Alias for {@link #path()}.
+     * @return path
      */
     String[] value() default {};
 
@@ -38,6 +39,7 @@ public @interface RequestMapping {
      *
      * <p><b>Supported at the type level as well as at the method level.</b> When used at the type level, all
      * method-level mappings inherit this primary mapping, narrowing it for a specific handler method.
+     * @return path
      */
     String[] path() default {};
 
@@ -48,6 +50,7 @@ public @interface RequestMapping {
      * <p><b>Supported at the type level as well as at the method level.</b> When used at the type level, all
      * method-level mappings inherit this HTTP method restriction (i.e. the type-level restriction gets checked before the
      * handler method is even resolved).
+     * @return method
      */
     RequestMethod[] method() default {};
 
@@ -63,6 +66,7 @@ public @interface RequestMapping {
      * <p><b>Supported at the type level as well as at the method level.</b> When used at the type level, all
      * method-level mappings inherit this parameter restriction (i.e. the type-level restriction gets checked before the
      * handler method is even resolved).
+     * @return params
      */
     String[] params() default {};
 
@@ -84,6 +88,7 @@ public @interface RequestMapping {
      * <p><b>Supported at the type level as well as at the method level.</b> When used at the type level, all
      * method-level mappings inherit this header restriction (i .e. the type-level restriction gets checked before the
      * handler method is even resolved).
+     * @return headers
      */
     String[] headers() default {};
 
@@ -100,6 +105,7 @@ public @interface RequestMapping {
      *
      * <p><b>Supported at the type level as well as at the method level.</b> When used at the type level, all
      * method-level mappings override this consumes restriction.
+     * @return consumes
      */
     String[] consumes() default {};
 
@@ -120,6 +126,7 @@ public @interface RequestMapping {
      *
      * <p><b>Supported at the type level as well as at the method level.</b> When used at the type level, all
      * method-level mappings override this produces restriction.
+     * @return produces
      */
     String[] produces() default {};
 }

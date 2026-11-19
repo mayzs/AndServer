@@ -38,16 +38,29 @@ public class Merge implements Mapping {
     private Mapping mParent;
     private Mapping mChild;
 
+    /**
+     * Merge two {@link Mapping}.
+     * @param parent parent mapping.
+     * @param child child mapping.
+     */
     public Merge(Mapping parent, Mapping child) {
         this.mParent = parent;
         this.mChild = child;
     }
 
+    /**
+     * Get the path of mapping.
+     * @return path.
+     */
     @Override
     public String[] value() {
         return path();
     }
 
+    /**
+     * Get the path of mapping.
+     * @return path.
+     */
     @Override
     public String[] path() {
         if (mPaths != null) {
@@ -108,6 +121,10 @@ public class Merge implements Mapping {
         return mPaths;
     }
 
+    /**
+     * Get the request method of mapping.
+     * @return method.
+     */
     @Override
     public String[] method() {
         if (mMethods != null) {
@@ -123,6 +140,10 @@ public class Merge implements Mapping {
         return mMethods;
     }
 
+    /**
+     * Get the request params of mapping.
+     * @return params.
+     */
     @Override
     public String[] params() {
         if (mParams != null) {
@@ -135,6 +156,10 @@ public class Merge implements Mapping {
         return mParams;
     }
 
+    /**
+     * Get the request headers of mapping.
+     * @return headers.
+     */
     @Override
     public String[] headers() {
         if (mHeaders != null) {
@@ -147,6 +172,10 @@ public class Merge implements Mapping {
         return mHeaders;
     }
 
+    /**
+     * Get the request consumes of mapping.
+     * @return consumes.
+     */
     @Override
     public String[] consumes() {
         if (mConsumes != null) {
@@ -159,6 +188,10 @@ public class Merge implements Mapping {
         return mConsumes;
     }
 
+    /**
+     * Get the request produces of mapping.
+     * @return produces.
+     */
     @Override
     public String[] produces() {
         if (mProduces != null) {
@@ -171,6 +204,10 @@ public class Merge implements Mapping {
         return mProduces;
     }
 
+    /**
+     * Whether the mapping is a restful mapping.
+     * @return true if is restful mapping, otherwise false.
+     */
     @Override
     public boolean isRest() {
         return mParent.isRest() || mChild.isRest();

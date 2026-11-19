@@ -29,11 +29,13 @@ public @interface CookieValue {
 
     /**
      * Alias for {@link #name()}.
+     * @return cookie name
      */
     String value() default "";
 
     /**
      * The name of the cookie to bind to.
+     * @return cookie name
      */
     String name() default "";
 
@@ -44,6 +46,7 @@ public @interface CookieValue {
      * this to {@code false} if you prefer a {@code null} value if the cookie is not present in the request.
      *
      * <p>Alternatively, provide a {@link #defaultValue()}, which implicitly sets this flag to {@code false}.
+     * @return cookie required
      */
     boolean required() default true;
 
@@ -51,6 +54,7 @@ public @interface CookieValue {
      * The default value to use as a fallback.
      *
      * <p>Supplying a default value implicitly sets {@link #required()} to {@code false}.
+     * @return default value
      */
     String defaultValue() default "";
 }

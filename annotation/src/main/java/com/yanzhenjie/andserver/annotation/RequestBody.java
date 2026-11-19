@@ -31,6 +31,7 @@ public @interface RequestBody {
      * Whether body content is required.
      *
      * <p>Default is {@code true}, leading to an exception thrown in case there is no body content.
+     * @return required
      */
     boolean required() default true;
 }

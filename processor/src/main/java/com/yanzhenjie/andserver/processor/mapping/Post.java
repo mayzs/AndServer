@@ -26,46 +26,83 @@ public class Post implements Mapping {
     private PostMapping mMapping;
     private boolean isRest;
 
+    /**
+     * Constructor.
+     * @param mapping annotation.
+     * @param rest whether it is a restful request.
+     */
     public Post(PostMapping mapping, boolean rest) {
         this.mMapping = mapping;
         this.isRest = rest;
     }
 
+    /**
+     * Get request path.
+     * @return value
+     */
     @Override
     public String[] value() {
         return mMapping.value();
     }
 
+    /**
+     * Get request path.
+     * @return path
+     */
     @Override
     public String[] path() {
         return mMapping.path();
     }
 
+    /**
+     * Get request method.
+     * @return method
+     */
     @Override
     public String[] method() {
         return new String[]{RequestMethod.POST.value()};
     }
 
+    /**
+     * Get request params.
+     * @return params
+     */
     @Override
     public String[] params() {
         return mMapping.params();
     }
 
+    /**
+     * Get request headers.
+     * @return headers
+     */
     @Override
     public String[] headers() {
         return mMapping.headers();
     }
 
+    /**
+     * Get request consumes.
+     * @return consumes
+     */
     @Override
     public String[] consumes() {
         return mMapping.consumes();
     }
 
+    /**
+     * Get request produces.
+     * @return produces
+     */
     @Override
     public String[] produces() {
         return mMapping.produces();
     }
 
+    /**
+     * Whether it is a restful request.
+     * @return true if it is a restful request.
+     */
     @Override
     public boolean isRest() {
         return isRest;

@@ -20,17 +20,52 @@ package com.yanzhenjie.andserver.processor.util;
  */
 public interface Patterns {
 
+    /**
+     * [a-zA-Z0-9_\-]
+     */
     String WORD = "[a-zA-Z0-9_\\-%s]%s";
-
+    /**
+     * [\\u4e00-\\u9fa5\.]
+     */
     String PATH_0 = String.format(WORD, "\\u4e00-\\u9fa5\\.", "*");
+    /**
+     * [\\u4e00-\\u9fa5\.]
+     */
     String PATH_1 = String.format(WORD, "\\u4e00-\\u9fa5\\.", "+");
+    /**
+     * [\\u4e00-\\u9fa5\.]
+     */
     String PATH_STRICT = String.format("((/%s)|((/%s)+))|((/%s)+/)", PATH_0, PATH_1, PATH_1);
+    /**
+     * ((/{PATH_1})+)(((/{PATH_1})|(/\\{PATH_1}/)|(/\\{PATH_1})|(/\\{PATH_1}/))+)
+     */
     String PATH_BLURRED_MAYBE = String.format("((/%s)+)(((/%s)|(/%s/)|(/\\{%s})|(/\\{%s}/))+)", PATH_1, PATH_1, PATH_1, PATH_1, PATH_1);
+    /**
+     * /\\{PATH_1}
+     */
     String PATH_BLURRED_INCLUDE = String.format("/\\{%s}", PATH_1);
+    /**
+     * [a-zA-Z0-9_\-]
+     */
 
+    /**
+     * [a-zA-Z0-9_\-]
+     */
     String PAIR_KEY = String.format(WORD, "", "+");
+    /**
+     * (.)
+     */
     String PAIR_VALUE = "(.)*";
+    /**
+     * ({PAIR_KEY})=({PAIR_VALUE})
+     */
     String PAIR_KEY_VALUE = String.format("(%s)(=)(%s)", PAIR_KEY, PAIR_VALUE);
+    /**
+     * !(PAIR_KEY)
+     */
     String PAIR_NO_KEY = String.format("!%s", PAIR_KEY);
+    /**
+     * ({PAIR_KEY})!=({PATH_1})
+     */
     String PAIR_NO_VALUE = String.format("(%s)(!=)(%s)", PAIR_KEY, PATH_1);
 }

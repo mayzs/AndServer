@@ -29,11 +29,13 @@ public @interface RequestHeader {
 
     /**
      * Alias for {@link #name()}.
+     * @return name
      */
     String value() default "";
 
     /**
      * The name of the request header to bind to.
+     * @return name
      */
     String name() default "";
 
@@ -43,6 +45,7 @@ public @interface RequestHeader {
      * <p>Defaults to {@code true}, leading to an exception being thrown if the header is missing in the request.
      *
      * <p>Alternatively, provide a {@link #defaultValue()}, which implicitly sets this flag to {@code false}.
+     * @return required
      */
     boolean required() default true;
 
@@ -50,6 +53,7 @@ public @interface RequestHeader {
      * The default value to use as a fallback.
      *
      * <p>Supplying a default value implicitly sets {@link #required()} to {@code false}.
+     * @return default value
      */
     String defaultValue() default "";
 }

@@ -1,8 +1,12 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-apply plugin: plugin.javaLibrary
-apply plugin: plugin.kotlinJvm
-apply plugin: plugin.ksp
-
+plugins{
+    id ("java-library")
+    id ("org.jetbrains.kotlin.jvm")
+    id ("com.google.devtools.ksp")
+}
+//apply plugin: "java-library"
+//apply plugin: "org.jetbrains.kotlin.jvm"
+//apply plugin: "com.google.devtools.ksp"
 compileJava {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -16,11 +20,11 @@ kotlin {
 dependencies {
     api project(':annotation')
 
-    implementation deps.poet
-    implementation deps.apache.lang
-    implementation deps.apache.collections
-    implementation deps.kotlinStdlib
-    implementation deps.kspSymbolProcessingApi
+    implementation ("com.squareup:javapoet:1.13.0")
+    implementation ("org.apache.commons:commons-lang3:3.22.0")
+    implementation ("org.apache.commons:commons-collections4:4.6.0")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:2.2.0")
+    compileOnly ("com.google.devtools.ksp:symbol-processing-api:2.3.9")
     implementation("com.squareup:kotlinpoet:2.2.0")
     implementation("com.squareup:kotlinpoet-ksp:2.2.0")
 }

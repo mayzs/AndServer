@@ -19,13 +19,37 @@ package com.yanzhenjie.andserver.annotation;
  * Created by Zhenjie Yan on 2018/6/3.
  */
 public enum RequestMethod {
+    /**
+     * The {@code GET} method.
+     */
     GET("GET"),
+    /**
+     * The {@code HEAD} method.
+     */
     HEAD("HEAD"),
+    /**
+     * The {@code POST} method.
+     */
     POST("POST"),
+    /**
+     * The {@code PUT} method.
+     */
     PUT("PUT"),
+    /**
+     * The {@code PATCH} method.
+     */
     PATCH("PATCH"),
+    /**
+     * The {@code DELETE} method.
+     */
     DELETE("DELETE"),
+    /**
+     * The {@code OPTIONS} method.
+     */
     OPTIONS("OPTIONS"),
+    /**
+     * The {@code TRACE} method.
+     */
     TRACE("TRACE");
 
     private String value;
@@ -34,6 +58,10 @@ public enum RequestMethod {
         this.value = value;
     }
 
+    /**
+     * Get method value.
+     * @return value
+     */
     public String value() {
         return value;
     }

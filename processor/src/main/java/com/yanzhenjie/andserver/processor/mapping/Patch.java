@@ -26,46 +26,83 @@ public class Patch implements Mapping {
     private PatchMapping mMapping;
     private boolean isRest;
 
+    /**
+     * Patch mapping.
+     * @param mapping annotation.
+     * @param rest is rest mapping.
+     */
     public Patch(PatchMapping mapping, boolean rest) {
         this.mMapping = mapping;
         this.isRest = rest;
     }
 
+    /**
+     * Get mapping value.
+     * @return value.
+     */
     @Override
     public String[] value() {
         return mMapping.value();
     }
 
+    /**
+     * Get mapping path.
+     * @return path.
+     */
     @Override
     public String[] path() {
         return mMapping.path();
     }
 
+    /**
+     * Get mapping method.
+     * @return method.
+     */
     @Override
     public String[] method() {
         return new String[]{RequestMethod.PATCH.value()};
     }
 
+    /**
+     * Get mapping params.
+     * @return params.
+     */
     @Override
     public String[] params() {
         return mMapping.params();
     }
 
+    /**
+     * Get mapping headers.
+     * @return headers.
+     */
     @Override
     public String[] headers() {
         return mMapping.headers();
     }
 
+    /**
+     * Get mapping consumes.
+     * @return consumes.
+     */
     @Override
     public String[] consumes() {
         return mMapping.consumes();
     }
 
+    /**
+     * Get mapping produces.
+     * @return produces.
+     */
     @Override
     public String[] produces() {
         return mMapping.produces();
     }
 
+    /**
+     * Is rest mapping.
+     * @return true if is rest mapping.
+     */
     @Override
     public boolean isRest() {
         return isRest;

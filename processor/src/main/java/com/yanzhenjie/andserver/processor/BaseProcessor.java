@@ -55,8 +55,18 @@ public abstract class BaseProcessor extends AbstractProcessor {
         return nameSet;
     }
 
+    /**
+     * Add annotation.
+     * @param classSet classSet
+     */
     protected abstract void addAnnotation(Set<Class<? extends Annotation>> classSet);
 
+    /**
+     * Check if the class is the specified type.
+     * @param element element
+     * @param type type
+     * @return s
+     */
     protected boolean isAcceptType(TypeElement element, TypeName type) {
         TypeMirror mirror = element.getSuperclass();
         if (mirror == null || mirror.getKind() != TypeKind.DECLARED) {
@@ -75,6 +85,12 @@ public abstract class BaseProcessor extends AbstractProcessor {
         return false;
     }
 
+    /**
+     * Check if the class is the specified interface.
+     * @param element element
+     * @param type type
+     * @return s
+     */
     protected boolean isAcceptInterface(TypeElement element, TypeName type) {
         List<? extends TypeMirror> mirrors = element.getInterfaces();
 
@@ -98,6 +114,11 @@ public abstract class BaseProcessor extends AbstractProcessor {
         return false;
     }
 
+    /**
+     * Get register package name.
+     * @param appSet appSet
+     * @return s
+     */
     protected String getRegisterPackageName(Set<? extends Element> appSet) {
         List<String> list = appSet.stream()
             .map((Function<Element, String>) element -> {

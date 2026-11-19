@@ -33,6 +33,19 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
+import com.android.build.api.variant.AndroidComponentsExtension;
+import com.android.build.api.variant.GeneratesApk;
+import com.android.build.api.variant.TestComponent;
+import com.android.build.api.variant.Variant;
+
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.TaskProvider;
+
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 /**
  * Created by Zhenjie Yan on 4/10/20.
@@ -42,50 +55,70 @@ public class AndServerPlugin implements Plugin<Project> {
     @Override
     public void apply(@Nonnull Project project) {
         Log.inject(project);
-        project.getPlugins().all(it -> {
-            if (it instanceof AppPlugin) {
-                AppExtension extension = project.getExtensions().getByType(AppExtension.class);
-                configGenerator(project, extension.getApplicationVariants());
-            } else if (it instanceof LibraryPlugin) {
-                LibraryExtension extension = project.getExtensions().getByType(LibraryExtension.class);
-                configGenerator(project, extension.getLibraryVariants());
-            }
-        });
+
+        // 用插件 ID 感知，替代 instanceof AppPlugin / LibraryPlugin（AGP 9 已隐藏这些内部类），
+        // 同时兼容 "先 apply 本插件 / 后 apply AGP" 两种顺序
+        project.getPluginManager().withPlugin("com.android.application",
+                applied -> configGenerator(project, true));
+        project.getPluginManager().withPlugin("com.android.library",
+                applied -> configGenerator(project, false));
     }
 
-    private void configGenerator(Project project, DomainObjectSet<? extends BaseVariant> variants) {
-        variants.all(it -> {
-            configTask(it);
+    @SuppressWarnings("unchecked")
+    private void configGenerator(Project project, boolean isApp) {
+        AndroidComponentsExtension<?, ?, Variant> androidComponents =
+                (AndroidComponentsExtension<?, ?, Variant>)
+                        project.getExtensions().getByType(AndroidComponentsExtension.class);
 
-            File outputDir = new File(project.getBuildDir(), "generated/source/andServer/" + it.getDirName());
-            String taskName = String.format("generate%sAppInfo", capitalize(it.getName()));
-            Task generate = project.getTasks().create(taskName, AppInfoGenerator.class, generator -> {
-                generator.setOutputDir(outputDir);
-                String appId = it.getApplicationId();
-                generator.setAppId(appId);
-                String packageName = String.format("%s.andserver.plugin.generator", appId);
-                generator.setPackageName(packageName);
-            });
-            it.registerJavaGeneratingTask(generate, outputDir);
-        });
-    }
-
-    private void configTask(BaseVariant variant) {
-        Action<Task> action = task -> {
-            String filename = String.format("%s.andserver", variant.getApplicationId());
-            File file = new File(variant.getMergeAssetsProvider().get().getOutputDir().get().getAsFile(), filename);
-            if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                    FileUtils.write(file, filename);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        Function1<Variant, Unit> callback = variant -> {
+            // 原 applicationVariants/libraryVariants 只含主变体，跳过测试组件
+            if (variant instanceof TestComponent) {
+                return Unit.INSTANCE;
             }
+
+            // 应用模块用 applicationId（含 flavor 后缀），库模块用 namespace
+            Provider<String> appIdProvider;
+            if (isApp && variant instanceof GeneratesApk) {
+                appIdProvider = ((GeneratesApk) variant).getApplicationId();
+            } else {
+                appIdProvider = variant.getNamespace();
+            }
+
+            String variantName = variant.getName();
+            String taskName = "generate" + capitalize(variantName) + "AppInfo";
+
+            TaskProvider<AppInfoGenerator> generate =
+                    project.getTasks().register(taskName, AppInfoGenerator.class, generator -> {
+                        generator.getAppId().set(appIdProvider);
+                        generator.getPackageName().set(appIdProvider.map(
+                                appId -> appId + ".andserver.plugin.generator"));
+                        // 输出目录由下方 Sources API 自动接线，这里不要手动 set
+                    });
+
+            // 替代 registerJavaGeneratingTask(generate, outputDir)
+            if (variant.getSources().getJava() != null) {
+                variant.getSources().getJava()
+                        .addGeneratedSourceDirectory(generate, AppInfoGenerator::getOutputDir);
+            }
+
+            // 替代往 mergeAssets 输出目录 doLast 写文件的 hack：
+            // 生成的 assets 目录会被正式合并进 APK assets
+            if (variant.getSources().getAssets() != null) {
+                variant.getSources().getAssets()
+                        .addGeneratedSourceDirectory(generate, AppInfoGenerator::getAssetsOutputDir);
+            }
+
+            return Unit.INSTANCE;
         };
-        variant.getMergeAssetsProvider().get().doLast(action);
+
+        androidComponents.onVariants(androidComponents.selector().all(), callback);
     }
 
+    /**
+     * 首字母大写。
+     * @param text 转换的文字
+     * @return 转换后的文字
+     */
     public static String capitalize(String text) {
         if (text != null && text.length() > 0) {
             char[] chars = text.toCharArray();

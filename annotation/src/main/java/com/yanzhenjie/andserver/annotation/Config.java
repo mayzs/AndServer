@@ -43,6 +43,7 @@ public @interface Config {
 
     /**
      * Group name.
+     * @return group name
      */
     String value() default "default";
 }

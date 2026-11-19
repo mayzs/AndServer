@@ -1,25 +1,24 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
-apply plugin: plugin.android
-apply plugin: plugin.kotlinAndroid
-apply plugin: plugin.ksp
-apply plugin: plugin.andServer
-
+plugins{
+    id ("com.android.application")
+    id ("com.google.devtools.ksp")
+    id ("io.github.mayzs.andserver")
+}
 android {
     namespace='com.yanzhenjie.andserver.sample'
-    compileSdkVersion androidBuild.compileSdkVersion
+    compileSdkVersion 36
 
     defaultConfig {
-        applicationId androidBuild.applicationId
-        minSdkVersion androidBuild.sampleMinSdkVersion
-        targetSdkVersion androidBuild.sampleTargetSdkVersion
+        applicationId = "com.yanzhenjie.andserver.sample"
+        minSdkVersion 23
+        targetSdkVersion 36
         versionCode 1
         versionName POM_VERSION
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility=JavaVersion.VERSION_17
+        targetCompatibility=JavaVersion.VERSION_17
     }
     kotlin {
         compilerOptions {
@@ -27,7 +26,7 @@ android {
         }
     }
     buildFeatures {
-        buildConfig true
+        buildConfig=true
     }
 }
 
@@ -43,13 +42,13 @@ dependencies {
         annotationProcessor project(':processor')
     }
 
-    implementation deps.android.material
-    implementation deps.android.compat
+    implementation ("com.google.android.material:material:1.12.0")
+    implementation ("androidx.appcompat:appcompat:1.7.1")
 
-    implementation deps.apache.lang
-    implementation deps.apache.collections
+    implementation ("org.apache.commons:commons-lang3:3.12.0")
+    implementation ("org.apache.commons:commons-collections4:4.4")
 
-    implementation deps.loading
-    implementation deps.json
-    implementation deps.kotlinStdlib
+    implementation ("com.yanzhenjie:loading:1.0.0")
+    implementation ("com.alibaba:fastjson:1.1.71.android")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:2.2.0")
 }

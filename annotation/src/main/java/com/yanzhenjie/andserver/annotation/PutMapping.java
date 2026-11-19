@@ -29,31 +29,37 @@ public @interface PutMapping {
 
     /**
      * Alias for {@link RequestMapping#value()}.
+     * @return value
      */
     String[] value() default {};
 
     /**
      * Alias for {@link RequestMapping#path()}.
+     * @return path
      */
     String[] path() default {};
 
     /**
      * Alias for {@link RequestMapping#params()}.
+     * @return params
      */
     String[] params() default {};
 
     /**
      * Alias for {@link RequestMapping#headers()}.
+     * @return headers
      */
     String[] headers() default {};
 
     /**
      * Alias for {@link RequestMapping#consumes()}.
+     * @return consumes
      */
     String[] consumes() default {};
 
     /**
      * Alias for {@link RequestMapping#produces()}.
+     * @return produces
      */
     String[] produces() default {};
 }

@@ -29,6 +29,7 @@ public @interface Converter {
 
     /**
      * Group name.
+     * @return group name
      */
     String value() default "default";
 }

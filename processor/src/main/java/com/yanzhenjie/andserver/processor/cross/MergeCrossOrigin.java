@@ -33,15 +33,28 @@ public class MergeCrossOrigin {
     private String[] mExposedHeaders;
     private String[] mMethods;
 
+    /**
+     * Merge cross origin.
+     * @param parent parent cross origin.
+     * @param child child cross origin.
+     */
     public MergeCrossOrigin(CrossOriginImpl parent, CrossOriginImpl child) {
         this.mParent = parent;
         this.mChild = child;
     }
 
+    /**
+     * Get cross origin value.
+     * @return value.
+     */
     public String[] value() {
         return origins();
     }
 
+    /**
+     * Get cross origin origins.
+     * @return origins.
+     */
     public String[] origins() {
         if (mOrigins != null) {
             return mOrigins;
@@ -60,6 +73,10 @@ public class MergeCrossOrigin {
         return mOrigins;
     }
 
+    /**
+     * Get cross origin allowed headers.
+     * @return allowed headers.
+     */
     public String[] allowedHeaders() {
         if (mAllowedHeaders != null) {
             return mAllowedHeaders;
@@ -71,6 +88,10 @@ public class MergeCrossOrigin {
         return mAllowedHeaders;
     }
 
+    /**
+     * Get cross origin exposed headers.
+     * @return exposed headers.
+     */
     public String[] exposedHeaders() {
         if (mExposedHeaders != null) {
             return mExposedHeaders;
@@ -82,6 +103,10 @@ public class MergeCrossOrigin {
         return mExposedHeaders;
     }
 
+    /**
+     * Get cross origin methods.
+     * @return methods.
+     */
     public String[] methods() {
         if (mMethods != null) {
             return mMethods;
@@ -93,6 +118,10 @@ public class MergeCrossOrigin {
         return mMethods;
     }
 
+    /**
+     * Get cross origin allow credentials.
+     * @return allow credentials.
+     */
     public boolean allowCredentials() {
         String cCredentials = mChild.allowCredentials();
         if (StringUtils.isNotEmpty(cCredentials)) {
@@ -107,6 +136,10 @@ public class MergeCrossOrigin {
         return true;
     }
 
+    /**
+     * Get cross origin max age.
+     * @return max age.
+     */
     public long maxAge() {
         long cMaxAge = mChild.maxAge();
         if (cMaxAge >= 0) {

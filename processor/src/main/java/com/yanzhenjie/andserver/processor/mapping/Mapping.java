@@ -25,41 +25,49 @@ public interface Mapping {
 
     /**
      * {@link RequestMapping#value()}
+     * @return value
      */
     String[] value();
 
     /**
      * {@link RequestMapping#path()}
+     * @return path
      */
     String[] path();
 
     /**
      * {@link RequestMapping#method()}
+     * @return method
      */
     String[] method();
 
     /**
      * {@link RequestMapping#params()}
+     * @return params
      */
     String[] params();
 
     /**
      * {@link RequestMapping#headers()}
+     * @return headers
      */
     String[] headers();
 
     /**
      * {@link RequestMapping#consumes()}
+     * @return consumes
      */
     String[] consumes();
 
     /**
      * {@link RequestMapping#produces()}
+     * @return produces
      */
     String[] produces();
 
     /**
      * {@link ResponseBody}
+     * @return isRest
      */
     boolean isRest();
 }

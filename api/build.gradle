@@ -1,23 +1,26 @@
-apply plugin: plugin.androidLibrary
-apply plugin: plugin.kotlinAndroid
-apply plugin: plugin.ksp
-
+//apply plugin: "com.android.library"
+//apply plugin: plugin.kotlinAndroid
+//apply plugin: "com.google.devtools.ksp"
+plugins {
+    id ("com.android.library")
+    id ("com.google.devtools.ksp")
+}
 android {
     namespace='com.yanzhenjie.andserver.api'
-    compileSdkVersion androidBuild.compileSdkVersion
+    compileSdkVersion 36
 
     defaultConfig {
-        minSdkVersion androidBuild.libraryMinSdkVersion
-        targetSdkVersion androidBuild.libraryTargetSdkVersion
+        minSdkVersion 23
+        targetSdkVersion 36
         consumerProguardFiles 'proguard-rules.txt'
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility=JavaVersion.VERSION_17
+        targetCompatibility=JavaVersion.VERSION_17
     }
     buildFeatures {
-        buildConfig true
+        buildConfig=true
     }
     buildTypes {
         release {
@@ -32,10 +35,10 @@ android {
 dependencies {
     api project(':annotation')
 
-    implementation deps.apache.httpcore
-    implementation deps.apache.fileupload
-    compileOnly deps.android.annotation
-    implementation deps.kotlinStdlib
+    implementation ("com.yanzhenjie.apache:httpcore:4.4.16")
+    implementation ("com.yanzhenjie.apache:fileupload:1.4")
+    compileOnly ("androidx.annotation:annotation:1.11.0")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:2.2.0")
 }
 
 //apply from: publishScript

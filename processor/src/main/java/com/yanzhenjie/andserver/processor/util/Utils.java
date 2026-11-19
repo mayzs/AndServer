@@ -26,6 +26,15 @@ import java.util.Map;
  * Created by Zhenjie Yan on 10/19/20.
  */
 public class Utils {
+    /**
+     * Merge repeat array.
+     *
+     * @param parents parent array.
+     * @param children children array.
+     * @param ignoreCap ignore case.
+     *
+     * @return merge array.
+     */
 
     public static String[] mergeRepeat(String[] parents, String[] children, boolean ignoreCap) {
         Map<String, String> map = new HashMap<>();
@@ -43,6 +52,11 @@ public class Utils {
         return values.toArray(new String[0]);
     }
 
+    /**
+     * Parse mime type.
+     *
+     * @param rawdata raw data.
+     */
     public static void parseMimeType(String rawdata) {
         String primaryType;
         String subType;
@@ -74,6 +88,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Check if the given string is a valid token.
+     *
+     * @param s the string to check.
+     *
+     * @return {@code true} if valid, {@code false} otherwise.
+     */
     private static boolean isValidToken(String s) {
         int len = s.length();
         if (len > 0) {
@@ -89,6 +110,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Check if the given char is a valid token character.
+     *
+     * @param c the char to check.
+     *
+     * @return {@code true} if valid, {@code false} otherwise.
+     */
     private static boolean isTokenChar(char c) {
         return c > ' ' && c < 127 && "()<>@,;:/[]?=\\\"".indexOf(c) < 0;
     }

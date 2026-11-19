@@ -26,23 +26,42 @@ import javax.tools.Diagnostic;
 public class Logger {
 
     private Messager mMessager;
-
+    /**
+     * Constructor.
+     *
+     * @param messager {@link Messager}.
+     */
     public Logger(Messager messager) {
         this.mMessager = messager;
     }
 
+    /**
+     * Log info.
+     *
+     * @param info log info.
+     */
     public void i(CharSequence info) {
         if (StringUtils.isNotEmpty(info)) {
             mMessager.printMessage(Diagnostic.Kind.NOTE, info);
         }
     }
 
+    /**
+     * Log error.
+     *
+     * @param error log error.
+     */
     public void e(CharSequence error) {
         if (StringUtils.isNotEmpty(error)) {
             mMessager.printMessage(Diagnostic.Kind.ERROR, "An exception is encountered, " + error);
         }
     }
 
+    /**
+     * Log error.
+     *
+     * @param error log error.
+     */
     public void e(Throwable error) {
         if (null != error) {
             mMessager.printMessage(Diagnostic.Kind.ERROR,
@@ -50,12 +69,24 @@ public class Logger {
         }
     }
 
+    /**
+     * Log warning.
+     *
+     * @param warning log warning.
+     */
     public void w(CharSequence warning) {
         if (StringUtils.isNotEmpty(warning)) {
             mMessager.printMessage(Diagnostic.Kind.WARNING, warning);
         }
     }
 
+    /**
+     * Format stack trace.
+     *
+     * @param stackTrace stack trace.
+     *
+     * @return format string.
+     */
     private String formatStackTrace(StackTraceElement[] stackTrace) {
         StringBuilder sb = new StringBuilder();
         for (StackTraceElement element : stackTrace) {

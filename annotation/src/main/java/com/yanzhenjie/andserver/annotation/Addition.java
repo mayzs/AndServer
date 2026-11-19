@@ -29,51 +29,61 @@ public @interface Addition {
 
     /**
      * Alias for {@link #stringType()}.
+     * @return value
      */
     String[] value() default {};
 
     /**
      * The added value of the String type.
+     * @return String type
      */
     String[] stringType() default {};
 
     /**
      * The added value of the boolean type.
+     * @return boolean type
      */
     boolean[] booleanType() default {};
 
     /**
      * The added value of the int type.
+     * @return int type
      */
     int[] intTypeType() default {};
 
     /**
      * The added value of the long type.
+     * @return long type
      */
     long[] longType() default {};
 
     /**
      * The added value of the short type.
+     * @return short type
      */
     short[] shortType() default {};
 
     /**
      * The added value of the float type.
+     * @return float type
      */
     float[] floatType() default {};
 
     /**
      * The added value of the double type.
+     * @return double type
      */
     double[] doubleType() default {};
 
     /**
      * The added value of the byte type.
+     * @return byte type
      */
     byte[] byteType() default {};
 
     /**
      * The added value of the char type.
+     * @return char type
      */
     char[] charType() default {};
 }

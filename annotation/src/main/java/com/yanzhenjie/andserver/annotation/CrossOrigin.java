@@ -29,6 +29,7 @@ public @interface CrossOrigin {
 
     /**
      * Alias for {@link #origins()}.
+     * @return value
      */
     String[] value() default {};
 
@@ -42,6 +43,7 @@ public @interface CrossOrigin {
      * <p>If undefined, all origins are allowed.
      *
      * @see #value()
+     * @return value
      */
     String[] origins() default {};
 
@@ -53,6 +55,7 @@ public @interface CrossOrigin {
      * {@code "*"}  means that all headers requested by the client are allowed.
      *
      * <p>If undefined, all requested headers are allowed.
+     * @return value
      */
     String[] allowedHeaders() default {};
 
@@ -63,6 +66,7 @@ public @interface CrossOrigin {
      * {@code Access-Control-Expose-Headers} header.
      *
      * <p>If undefined, an empty exposed header list is used.
+     * @return value
      */
     String[] exposedHeaders() default {};
 
@@ -73,6 +77,7 @@ public @interface CrossOrigin {
      * <p>Methods specified here override those specified via {@code RequestMapping}.
      *
      * <p>If undefined, methods defined by {@link RequestMapping} annotation are used.
+     * @return value
      */
     RequestMethod[] methods() default {};
 
@@ -86,6 +91,7 @@ public @interface CrossOrigin {
      * {@code Access-Control-Allow-Credentials=true}.
      *
      * <p>If undefined, credentials are allowed.
+     * @return value
      */
     String allowCredentials() default "";
 
@@ -100,6 +106,7 @@ public @interface CrossOrigin {
      * A negative value means <em>undefined</em>.
      *
      * <p>If undefined, max age is set to {@code 1800} seconds (i.e., 30 minutes).
+     * @return value
      */
     long maxAge() default -1;
 }

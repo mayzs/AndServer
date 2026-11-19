@@ -12,3 +12,4 @@ local.properties
 *.iml
 *.log
 *.apk
+/gradle/publish.gradle
