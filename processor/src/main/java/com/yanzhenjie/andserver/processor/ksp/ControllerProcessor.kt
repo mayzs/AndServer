@@ -51,6 +51,9 @@ class ControllerProcessor(
         return name
     }
 
+    // Returns the fully-qualified simple name of a ClassName for embedding in raw strings.
+    private fun cm(cn: com.squareup.kotlinpoet.ClassName): String = cn.toString()
+
     // All handler class names already written in this run.
     private val generatedHandlerClassNames = mutableSetOf<String>()
     private val processedControllers = mutableSetOf<String>()
@@ -212,135 +215,102 @@ class ControllerProcessor(
         packageName: String,
         handlerClassNames: List<String>
     ) {
-        val controllerClassName = type.toClassName()
+        val adapterTypeName = "${type.simpleName.asString()}Adapter"
 
-        // mHost field - private, set in constructor
-        val hostField = PropertySpec.builder("mHost", controllerClassName, KModifier.PRIVATE)
-            .build()
+        // Build the entire init-block body as a raw Kotlin string.
+        // Avoids KotlinPoet's immutable Chain-builder which accumulates O(N²)
+        // intermediate AST nodes — the root cause of OOM on large controllers.
+        val initBody = buildString {
+            appendLine("this.mHost = ${type.simpleName.asString()}()")
+            appendLine("this.mMappingMap = linkedMapOf()")
 
-        // mMappingMap field - Map<Mapping, RequestHandler>
-        val mappingField = PropertySpec.builder("mMappingMap", mappingToHandlerMap, KModifier.PRIVATE)
-            .build()
+            for ((idx, execute) in executes.withIndex()) {
+                val hName = handlerClassNames[idx]
+                val mv   = "mapping$idx"
+                val hv   = "handler$idx"
 
-        // Constructor: initialize host and mapping map, then populate with handlers
-        val constructorBuilder = FunSpec.constructorBuilder()
-            .addModifiers(KModifier.PUBLIC)
-            .addStatement("this.mHost = %T()", controllerClassName)
-            .addStatement("this.mMappingMap = linkedMapOf()")
+                // Mapping instance
+                appendLine("\nval $mv = ${cm(mappingType)}()")
 
-        for ((idx, execute) in executes.withIndex()) {
-            // Use a stable variable per iteration so KotlinPoet's lazy evaluation
-            // doesn't pick up a later value from the loop closure.
-            val currentHandlerClassName = handlerClassNames[idx]
-            val handlerVarName = "handler${idx}"
-            val mappingVarName = "mapping${idx}"
-
-            // Create Mapping instance
-            constructorBuilder.addStatement("\nval $mappingVarName = %T()", mappingType)
-            
-            // Extract and set path — join all path parts into a single rule.
-            // Multiple addRule() calls create independent rules that fail runtime matching
-            // because each rule is matched against the full request path independently.
-            val paths = extractPaths(type, execute)
-            if (paths.isNotEmpty()) {
-                constructorBuilder.addStatement("val path${idx} = %T()", pathType)
-                constructorBuilder.addStatement("path${idx}.addRule(%S)", paths.joinToString(""))
-                constructorBuilder.addStatement("$mappingVarName.setPath(path${idx})")
-            }
-            
-            // Extract and set method
-            val methods = extractMethods(type, execute)
-            if (methods.isNotEmpty()) {
-                constructorBuilder.addStatement("val method${idx} = %T()", methodType)
-                for (method in methods) {
-                    constructorBuilder.addStatement("method${idx}.addRule(%S)", method)
+                // Path – join class-level + method-level paths into one rule.
+                // Multiple addRule() calls would create independent rules that fail
+                // runtime matching because each rule is matched against the full
+                // request path independently.
+                val paths = extractPaths(type, execute)
+                if (paths.isNotEmpty()) {
+                    appendLine("val path$idx = ${cm(pathType)}()")
+                    appendLine("path$idx.addRule(\"${paths.joinToString("")}\")")
+                    appendLine("$mv.setPath(path$idx)")
                 }
-                constructorBuilder.addStatement("$mappingVarName.setMethod(method${idx})")
-            }
-            
-            // Extract and set params
-            val params = extractParams(type, execute)
-            if (params.isNotEmpty()) {
-                constructorBuilder.addStatement("val param${idx} = %T()", pairType)
-                for (param in params) {
-                    constructorBuilder.addStatement("param${idx}.addRule(%S)", param)
-                }
-                constructorBuilder.addStatement("$mappingVarName.setParam(param${idx})")
-            }
-            
-            // Extract and set headers
-            val headers = extractHeaders(type, execute)
-            if (headers.isNotEmpty()) {
-                constructorBuilder.addStatement("val header${idx} = %T()", pairType)
-                for (header in headers) {
-                    constructorBuilder.addStatement("header${idx}.addRule(%S)", header)
-                }
-                constructorBuilder.addStatement("$mappingVarName.setHeader(header${idx})")
-            }
-            
-            // Extract and set consumes
-            val consumes = extractConsumes(type, execute)
-            if (consumes.isNotEmpty()) {
-                constructorBuilder.addStatement("val consume${idx} = %T()", mimeTypes)
-                for (consume in consumes) {
-                    constructorBuilder.addStatement("consume${idx}.addRule(%S)", consume)
-                }
-                constructorBuilder.addStatement("$mappingVarName.setConsume(consume${idx})")
-            }
-            
-            // Extract and set produces
-            val produces = extractProduces(type, execute)
-            if (produces.isNotEmpty()) {
-                constructorBuilder.addStatement("val produce${idx} = %T()", mimeTypes)
-                for (produce in produces) {
-                    constructorBuilder.addStatement("produce${idx}.addRule(%S)", produce)
-                }
-                constructorBuilder.addStatement("$mappingVarName.setProduce(produce${idx})")
-            }
 
-            // Create Addition instance
-            val additionVarName = "addition${idx}"
-            constructorBuilder.addStatement("val $additionVarName = %T()", additionType)
-            
-            // Create CrossOrigin instance
-            val crossOriginVarName = "crossOrigin${idx}"
-            constructorBuilder.addStatement("val $crossOriginVarName = %T()", crossOriginType)
+                // Method
+                val methods = extractMethods(type, execute)
+                if (methods.isNotEmpty()) {
+                    appendLine("val method$idx = ${cm(methodType)}()")
+                    for (m in methods) appendLine("method$idx.addRule(\"$m\")")
+                    appendLine("$mv.setMethod(method$idx)")
+                }
 
-            // Create the handler instance with unique variable name
-            constructorBuilder.addStatement(
-                "val $handlerVarName = %L(this.mHost, $mappingVarName, $additionVarName, $crossOriginVarName)",
-                currentHandlerClassName
-            )
+                // Params
+                val params = extractParams(type, execute)
+                if (params.isNotEmpty()) {
+                    appendLine("val param$idx = ${cm(pairType)}()")
+                    for (p in params) appendLine("param$idx.addRule(\"$p\")")
+                    appendLine("$mv.setParam(param$idx)")
+                }
 
-            // Put mapping -> handler into the map
-            constructorBuilder.addStatement("this.mMappingMap[$mappingVarName] = $handlerVarName")
+                // Headers
+                val headers = extractHeaders(type, execute)
+                if (headers.isNotEmpty()) {
+                    appendLine("val header$idx = ${cm(pairType)}()")
+                    for (h in headers) appendLine("header$idx.addRule(\"$h\")")
+                    appendLine("$mv.setHeader(header$idx)")
+                }
+
+                // Consumes
+                val consumes = extractConsumes(type, execute)
+                if (consumes.isNotEmpty()) {
+                    appendLine("val consume$idx = ${cm(mimeTypes)}()")
+                    for (c in consumes) appendLine("consume$idx.addRule(\"$c\")")
+                    appendLine("$mv.setConsume(consume$idx)")
+                }
+
+                // Produces
+                val produces = extractProduces(type, execute)
+                if (produces.isNotEmpty()) {
+                    appendLine("val produce$idx = ${cm(mimeTypes)}()")
+                    for (p in produces) appendLine("produce$idx.addRule(\"$p\")")
+                    appendLine("$mv.setProduce(produce$idx)")
+                }
+
+                // Addition
+                appendLine("val addition$idx = ${cm(additionType)}()")
+                // CrossOrigin
+                appendLine("val crossOrigin$idx = ${cm(crossOriginType)}()")
+                // Handler
+                appendLine("val $hv = $hName(this.mHost, $mv, addition$idx, crossOrigin$idx)")
+                // Register mapping
+                appendLine("this.mMappingMap[$mv] = $hv")
+            }
         }
 
-        // getMappingMap() override - returns the map
-        val getMappingMapMethod = FunSpec.builder("getMappingMap")
-            .addModifiers(KModifier.OVERRIDE)
-            .returns(mappingToHandlerMap)
-            .addStatement("return mMappingMap")
-            .build()
-
-        // getHost() override - returns the controller instance
-        val getHostMethod = FunSpec.builder("getHost")
-            .addModifiers(KModifier.OVERRIDE)
-            .returns(Any::class)
-            .addStatement("return mHost")
-            .build()
-
-        val adapterClass = TypeSpec.classBuilder("${type.simpleName.asString()}Adapter")
+        val initBlock = CodeBlock.of(initBody)
+        val adapterClass = TypeSpec.classBuilder(adapterTypeName)
             .addModifiers(KModifier.PUBLIC, KModifier.FINAL)
             .superclass(mappingAdapterType)
-            .addProperty(hostField)
-            .addProperty(mappingField)
-            .primaryConstructor(constructorBuilder.build())
-            .addFunction(getMappingMapMethod)
-            .addFunction(getHostMethod)
+            .addProperty(PropertySpec.builder("mHost", type.toClassName(), KModifier.PRIVATE).build())
+            .addProperty(PropertySpec.builder("mMappingMap", mappingToHandlerMap, KModifier.PRIVATE).build())
+            .primaryConstructor(FunSpec.constructorBuilder()
+                .addModifiers(KModifier.PUBLIC)
+                .addCode(initBlock)
+                .build())
+            .addFunction(FunSpec.builder("getMappingMap").addModifiers(KModifier.OVERRIDE)
+                .returns(mappingToHandlerMap).addStatement("return mMappingMap").build())
+            .addFunction(FunSpec.builder("getHost").addModifiers(KModifier.OVERRIDE)
+                .returns(Any::class).addStatement("return mHost").build())
             .build()
 
-        FileSpec.builder(packageName, "${type.simpleName.asString()}Adapter")
+        FileSpec.builder(packageName, adapterTypeName)
             .addType(adapterClass)
             .build()
             .writeTo(codeGenerator, Dependencies(false))
