@@ -43,7 +43,10 @@ import java.nio.charset.StandardCharsets;
 
 @DisableCachingByDefault(because = "Generated class name is random, output is not deterministic")
 public abstract class AppInfoGenerator extends DefaultTask {
-
+    /**
+     * Default constructor.
+     */
+    public AppInfoGenerator(){}
     private static final char[] CHARS = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
             'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
     /**

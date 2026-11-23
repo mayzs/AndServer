@@ -80,6 +80,10 @@ public class ConfigProcessor extends BaseProcessor {
     private TypeName mMultipart;
 
     private TypeName mString;
+    /**
+     * Default constructor.
+     */
+    public ConfigProcessor(){}
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {

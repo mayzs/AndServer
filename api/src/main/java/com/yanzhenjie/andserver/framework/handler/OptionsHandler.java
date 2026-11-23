@@ -127,12 +127,12 @@ public class OptionsHandler implements MethodHandler {
             return invalidCORS(response);
         }
 
-        List<String> allowOrigins = Arrays.asList(crossOrigin.getOrigins());
+        List<String> allowOrigins = crossOrigin.getOrigins() != null ? Arrays.asList(crossOrigin.getOrigins()) : java.util.Collections.emptyList();
         if (!allowOrigins.isEmpty() && !allowOrigins.contains("*") && !allowOrigins.contains(requestOrigin)) {
             return invalidCORS(response);
         }
 
-        List<String> allowedHeaders = Arrays.asList(crossOrigin.getAllowedHeaders());
+        List<String> allowedHeaders = crossOrigin.getAllowedHeaders() != null ? Arrays.asList(crossOrigin.getAllowedHeaders()) : java.util.Collections.emptyList();
         List<String> outHeaders = new ArrayList<>();
         String headerHeadersText = request.getHeader(HttpHeaders.Access_Control_Request_Headers);
         List<String> requestHeaders = new ArrayList<>();

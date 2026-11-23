@@ -51,6 +51,10 @@ import kotlin.jvm.functions.Function1;
  * Created by Zhenjie Yan on 4/10/20.
  */
 public class AndServerPlugin implements Plugin<Project> {
+    /**
+     * Default constructor.
+     */
+    public AndServerPlugin(){}
 
     @Override
     public void apply(@Nonnull Project project) {

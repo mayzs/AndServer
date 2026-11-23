@@ -64,7 +64,10 @@ public class InterceptorProcessor extends BaseProcessor {
     private TypeName mInterceptor;
 
     private TypeName mString;
-
+    /**
+     * Default constructor.
+     */
+    public InterceptorProcessor(){}
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         mFiler = processingEnv.getFiler();

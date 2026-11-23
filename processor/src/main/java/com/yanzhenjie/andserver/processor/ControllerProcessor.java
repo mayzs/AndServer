@@ -156,6 +156,10 @@ public class ControllerProcessor extends BaseProcessor implements Patterns {
     private List<Integer> mHashCodes = new ArrayList<>();
 
     private Pattern mBlurredPathPattern = Pattern.compile(PATH_BLURRED_INCLUDE);
+    /**
+     * Default constructor.
+     */
+    public ControllerProcessor(){}
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {

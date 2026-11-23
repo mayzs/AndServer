@@ -1,6 +1,8 @@
 pluginManagement {
 //    includeBuild('plugin')
     repositories {
+        maven { url = uri("https://maven.aliyun.com/repository/gradle-plugin") }
+        maven { url = uri("https://maven.aliyun.com/repository/public") }
         mavenLocal()        // ← 加这行
         google()
         mavenCentral()
@@ -10,9 +12,11 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
+        maven { url = uri("https://maven.aliyun.com/repository/public") }
+        maven { url = uri("https://maven.aliyun.com/repository/google") }
         mavenLocal()
         google()
-        maven { url "https://jitpack.io" }
+        maven { url = uri("https://jitpack.io") }
         mavenCentral()
     }
 }

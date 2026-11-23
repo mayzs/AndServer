@@ -82,6 +82,7 @@ public class ComponentRegister {
                 load.onRegister(mContext, group, register);
             }
         } catch (ClassNotFoundException ignored) {
+            android.util.Log.w("AndServer", "register missing: " + className, ignored);
         }
     }
 }

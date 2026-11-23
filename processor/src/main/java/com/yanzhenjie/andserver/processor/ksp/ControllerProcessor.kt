@@ -38,7 +38,21 @@ class ControllerProcessor(
     override val logger = environment.logger
     override val codeGenerator = environment.codeGenerator
 
-    private val hashCodes = mutableSetOf<Int>()
+    // Resolves a base handler class name to a unique name.
+    // Uses a counter suffix only when the base name is already taken.
+    private fun resolveHandlerName(base: String): String {
+        var name = base
+        var i = 0
+        while (name in generatedHandlerClassNames) {
+            i++
+            name = "${base}$i"
+        }
+        generatedHandlerClassNames.add(name)
+        return name
+    }
+
+    // All handler class names already written in this run.
+    private val generatedHandlerClassNames = mutableSetOf<String>()
     private val processedControllers = mutableSetOf<String>()
     private val adapterGroups = mutableMapOf<String, MutableList<String>>()
 
@@ -75,22 +89,42 @@ class ControllerProcessor(
         set.add(AppInfo::class)
     }
 
+    // No-op: all collection and processing happens in process() to match JAP behavior.
+    // The per-annotation invocation here would add controllers to processedControllers
+    // prematurely, skipping later annotation types that contribute additional HTTP methods.
     override fun processAnnotations(
         annotation: KClass<out Annotation>,
         classes: List<KSClassDeclaration>,
         resolver: KSPResolver
-    ) {
-        if (annotation == AppInfo::class) return
+    ) {}
 
-        val annotationName = annotation.qualifiedName!!
-        val symbols = resolver.getSymbolsWithAnnotation(annotationName)
+    override fun process(resolver: KSPResolver): List<KSAnnotated> {
+        val mappingAnnoNames = listOf(
+            RequestMapping::class.qualifiedName!!,
+            GetMapping::class.qualifiedName!!,
+            PostMapping::class.qualifiedName!!,
+            PutMapping::class.qualifiedName!!,
+            PatchMapping::class.qualifiedName!!,
+            DeleteMapping::class.qualifiedName!!
+        )
 
-        for (symbol in symbols) {
-            if (symbol !is KSFunctionDeclaration) continue
-            val parent = symbol.parentDeclaration as? KSClassDeclaration ?: continue
+        // Phase 1: collect every mapping method per controller class (matches JAP's two-pass design).
+        // Store parent class directly to avoid redundant getClassDeclarationByName() re-resolution in KSP2.
+        val controllerMethods = mutableMapOf<String, Pair<KSClassDeclaration, MutableList<KSFunctionDeclaration>>>()
+        for (annoName in mappingAnnoNames) {
+            for (symbol in resolver.getSymbolsWithAnnotation(annoName)) {
+                if (symbol !is KSFunctionDeclaration) continue
+                val parent = symbol.parentDeclaration as? KSClassDeclaration ?: continue
+                val typeKey = parent.qualifiedName?.asString() ?: continue
+                controllerMethods.getOrPut(typeKey) { parent to mutableListOf() }.second.add(symbol)
+            }
+        }
 
-            val typeKey = parent.qualifiedName?.asString() ?: continue
+        // Phase 2: process each controller exactly once with its complete method list.
+        for ((typeKey, pair) in controllerMethods) {
+            val (parent, executes) = pair
             if (typeKey in processedControllers) continue
+            processedControllers.add(typeKey)
 
             val hasRestController = parent.annotations.any { it.shortName.asString() == "RestController" }
             val hasController = parent.annotations.any { it.shortName.asString() == "Controller" }
@@ -98,50 +132,29 @@ class ControllerProcessor(
                 logger.warn("Controller/RestController annotations may be missing on ${parent.qualifiedName?.asString()}")
                 continue
             }
-            if (Modifier.PRIVATE in symbol.modifiers) {
-                logger.error("The modifier private is redundant on ${symbol.simpleName.asString()}")
-            }
 
-            val executes = mutableListOf<KSFunctionDeclaration>()
-            executes.add(symbol)
-
-            for (annName in listOf(
-                RequestMapping::class.qualifiedName!!,
-                GetMapping::class.qualifiedName!!,
-                PostMapping::class.qualifiedName!!,
-                PutMapping::class.qualifiedName!!,
-                PatchMapping::class.qualifiedName!!,
-                DeleteMapping::class.qualifiedName!!
-            )) {
-                if (annName == annotationName) continue
-                for (otherSymbol in resolver.getSymbolsWithAnnotation(annName)) {
-                    if (otherSymbol !is KSFunctionDeclaration) continue
-                    val otherParent = otherSymbol.parentDeclaration as? KSClassDeclaration ?: continue
-                    if (otherParent.qualifiedName?.asString() == typeKey) {
-                        executes.add(otherSymbol)
-                    }
-                }
-            }
-
-            processedControllers.add(typeKey)
             logger.info("------ Processing ${parent.simpleName.asString()} ------")
             val packageName = parent.packageName.asString()
 
-            for (execute in executes) {
-                createHandlerClass(parent, execute, packageName)
+            // Pre-resolve all handler class names deterministically so createHandlerClass
+            // and createAdapterClass always agree on the same name for each method.
+            val handlerClassNames = executes.map { execute ->
+                val baseName = "${parent.simpleName.asString()}" +
+                    execute.simpleName.asString().replaceFirstChar { it.uppercaseChar() } + "Handler"
+                resolveHandlerName(baseName)
             }
 
-            createAdapterClass(parent, executes, packageName)
+            for ((idx, execute) in executes.withIndex()) {
+                createHandlerClass(parent, execute, packageName, handlerClassNames[idx])
+            }
+            createAdapterClass(parent, executes, packageName, handlerClassNames)
 
             val group = getGroup(parent)
             adapterGroups.getOrPut(group) { mutableListOf() }
                 .add("$packageName.${parent.simpleName.asString()}Adapter")
         }
-    }
 
-    override fun process(resolver: KSPResolver): List<KSAnnotated> {
-        super.process(resolver)
-
+        // Register adapters.
         if (adapterGroups.isNotEmpty()) {
             val appClasses = resolver
                 .getSymbolsWithAnnotation(AppInfo::class.qualifiedName!!)
@@ -159,16 +172,9 @@ class ControllerProcessor(
     private fun createHandlerClass(
         type: KSClassDeclaration,
         function: KSFunctionDeclaration,
-        packageName: String
+        packageName: String,
+        className: String
     ) {
-        val executeName = function.simpleName.asString().replaceFirstChar { it.uppercaseChar() }
-        var className = "${type.simpleName.asString()}${executeName}Handler"
-        var i = 0
-        while (className.hashCode() in hashCodes) {
-            i++
-            className = "${type.simpleName.asString()}${executeName}Handler$i"
-        }
-        hashCodes.add(className.hashCode())
 
         val constructorBuilder = FunSpec.constructorBuilder()
             .addModifiers(KModifier.PUBLIC)
@@ -203,7 +209,8 @@ class ControllerProcessor(
     private fun createAdapterClass(
         type: KSClassDeclaration,
         executes: List<KSFunctionDeclaration>,
-        packageName: String
+        packageName: String,
+        handlerClassNames: List<String>
     ) {
         val controllerClassName = type.toClassName()
 
@@ -222,21 +229,22 @@ class ControllerProcessor(
             .addStatement("this.mMappingMap = linkedMapOf()")
 
         for ((idx, execute) in executes.withIndex()) {
-            val executeName = execute.simpleName.asString().replaceFirstChar { it.uppercaseChar() }
-            val handlerClassName = "${type.simpleName.asString()}${executeName}Handler"
+            // Use a stable variable per iteration so KotlinPoet's lazy evaluation
+            // doesn't pick up a later value from the loop closure.
+            val currentHandlerClassName = handlerClassNames[idx]
             val handlerVarName = "handler${idx}"
             val mappingVarName = "mapping${idx}"
 
             // Create Mapping instance
             constructorBuilder.addStatement("\nval $mappingVarName = %T()", mappingType)
             
-            // Extract and set path
+            // Extract and set path — join all path parts into a single rule.
+            // Multiple addRule() calls create independent rules that fail runtime matching
+            // because each rule is matched against the full request path independently.
             val paths = extractPaths(type, execute)
             if (paths.isNotEmpty()) {
                 constructorBuilder.addStatement("val path${idx} = %T()", pathType)
-                for (path in paths) {
-                    constructorBuilder.addStatement("path${idx}.addRule(%S)", path)
-                }
+                constructorBuilder.addStatement("path${idx}.addRule(%S)", paths.joinToString(""))
                 constructorBuilder.addStatement("$mappingVarName.setPath(path${idx})")
             }
             
@@ -301,7 +309,7 @@ class ControllerProcessor(
             // Create the handler instance with unique variable name
             constructorBuilder.addStatement(
                 "val $handlerVarName = %L(this.mHost, $mappingVarName, $additionVarName, $crossOriginVarName)",
-                handlerClassName
+                currentHandlerClassName
             )
 
             // Put mapping -> handler into the map

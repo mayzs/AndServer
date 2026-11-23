@@ -38,7 +38,6 @@ dependencies {
     implementation ("com.yanzhenjie.apache:httpcore:4.4.16")
     implementation ("com.yanzhenjie.apache:fileupload:1.4")
     compileOnly ("androidx.annotation:annotation:1.11.0")
-    implementation ("org.jetbrains.kotlin:kotlin-stdlib:2.2.0")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:2.4.21")
 }
-
 //apply from: publishScript

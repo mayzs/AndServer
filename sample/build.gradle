@@ -32,23 +32,25 @@ android {
 
 dependencies {
     implementation project(':api')
-
+    ksp project(':processor')
+//    annotationProcessor("io.github.mayzs:andserver-processor:3.0.1")
+//    ksp("io.github.mayzs:andserver-processor:3.0.1")
     // kapt + KSP 共存：根据 useKsp 属性选择处理器
     // 默认使用 KSP（更快），设置 -PuseKsp=false 则回退到 kapt
-    def useKsp = findProperty('useKsp') ?: 'true'
-    if (useKsp == 'true') {
-        ksp project(':processor')
-    } else {
-        annotationProcessor project(':processor')
-    }
+//    def useKsp = findProperty('useKsp') ?: 'true'
+//    if (useKsp == 'true') {
+//        ksp project(':processor')
+//    } else {
+//        annotationProcessor project(':processor')
+//    }
 
     implementation ("com.google.android.material:material:1.12.0")
     implementation ("androidx.appcompat:appcompat:1.7.1")
 
-    implementation ("org.apache.commons:commons-lang3:3.12.0")
-    implementation ("org.apache.commons:commons-collections4:4.4")
+    implementation ("org.apache.commons:commons-lang3:3.22.0")
+    implementation ("org.apache.commons:commons-collections4:4.6.0")
 
     implementation ("com.yanzhenjie:loading:1.0.0")
     implementation ("com.alibaba:fastjson:1.1.71.android")
-    implementation ("org.jetbrains.kotlin:kotlin-stdlib:2.2.0")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:2.4.21")
 }

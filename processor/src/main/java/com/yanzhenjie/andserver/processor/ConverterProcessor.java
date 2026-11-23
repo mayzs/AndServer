@@ -62,6 +62,10 @@ public class ConverterProcessor extends BaseProcessor {
 
     private TypeName mConverter;
     private TypeName mString;
+    /**
+     * Default constructor.
+     */
+    public ConverterProcessor(){}
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {

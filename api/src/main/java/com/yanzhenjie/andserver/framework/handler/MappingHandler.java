@@ -160,7 +160,8 @@ public abstract class MappingHandler implements MethodHandler {
         if (!TextUtils.isEmpty(origin) && mCrossOrigin != null) {
             HttpMethod method = request.getMethod();
 
-            List<HttpMethod> allowMethods = Arrays.asList(mCrossOrigin.getMethods());
+            HttpMethod[] methods = mCrossOrigin.getMethods();
+            List<HttpMethod> allowMethods = methods != null ? Arrays.asList(methods) : java.util.Collections.emptyList();
             if (!allowMethods.isEmpty() && !allowMethods.contains(method)) {
                 return invalidCORS(response);
             }

@@ -37,6 +37,11 @@ import javax.lang.model.type.TypeMirror;
  * Created by Zhenjie Yan on 2018/6/8.
  */
 public abstract class BaseProcessor extends AbstractProcessor {
+    /**
+     * Default constructor.
+     */
+    public BaseProcessor() {
+    }
 
     @Override
     public final SourceVersion getSupportedSourceVersion() {

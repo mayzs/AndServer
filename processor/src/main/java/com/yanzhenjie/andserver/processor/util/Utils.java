@@ -26,6 +26,11 @@ import java.util.Map;
  * Created by Zhenjie Yan on 10/19/20.
  */
 public class Utils {
+
+    /**
+     * Default constructor.
+     */
+    public Utils(){}
     /**
      * Merge repeat array.
      *

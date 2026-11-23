@@ -63,6 +63,10 @@ public class ResolverProcessor extends BaseProcessor {
     private TypeName mResolver;
 
     private TypeName mString;
+    /**
+     * Default constructor.
+     */
+    public ResolverProcessor(){}
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {

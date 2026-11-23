@@ -27,7 +27,6 @@ dependencies {
 
 //apply from: publishScript
 
-
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << '-Xlint:deprecation'
 }
